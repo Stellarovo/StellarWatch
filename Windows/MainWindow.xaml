@@ -63,7 +63,7 @@
                     <controls:WindowControlButton x:Name="Pin" Click="PinClick"
                               PathData="{StaticResource Pin}"/>
                     <controls:WindowControlButton x:Name="Overlay" Click="OverlayClick"
-                              PathData="{StaticResource Overlay}"/>+
+                              PathData="{StaticResource Overlay}"/>
                     <controls:WindowControlButton x:Name="OpenLogs" Click="LogButtonClick"
                               PathData="{StaticResource LogIcon}"/>
                     <controls:WindowControlButton Click="AhkClick" 
