@@ -56,33 +56,37 @@
                         </Style>
                     </StackPanel.Resources>
 
-                    <controls:WindowControlButton Click="ExitButtonClick" 
+                            <controls:WindowControlButton Click="ExitButtonClick" 
                               PathData="{StaticResource CloseIcon}" GlowColor="#d93732"/>
-                    <controls:WindowControlButton Click="TrayButtonClick" 
+                            <controls:WindowControlButton Click="TrayButtonClick" 
                               PathData="{StaticResource HideIcon}"/>
-                <controls:WindowControlButton x:Name="Pin" Click="PinClick"
+                            <controls:WindowControlButton x:Name="Pin" Click="PinClick"
                               PathData="{StaticResource Pin}"/>
-                <controls:WindowControlButton x:Name="Overlay" Click="OverlayClick"
+                            <controls:WindowControlButton x:Name="Overlay" Click="OverlayClick"
                               PathData="{StaticResource Overlay}"/>
-                <controls:WindowControlButton x:Name="OpenLogs" Click="LogButtonClick"
+                            <controls:WindowControlButton x:Name="OpenLogs" Click="LogButtonClick"
                               PathData="{StaticResource LogIcon}"/>
-                <controls:WindowControlButton Click="AhkClick" 
+                            <controls:WindowControlButton Click="AhkClick" 
                               PathData="{StaticResource AhkIcon}"/>
-                <controls:WindowControlButton Click="SoundButtonClick"
+
+                            <!-- 音量滑块 -->
+                            <Border Height="96" Margin="-6,50,0,0">
+                                <Slider x:Name="VolumeSlider" 
+                                        Visibility="Collapsed"
+                                        Style="{StaticResource Slider}" 
+                                        Orientation="Vertical"
+                                        Value="0" Maximum="100" TickFrequency="1"
+                                        Width="20"
+                                        HorizontalAlignment="Center"
+                                        MouseWheel="Slider_MouseWheel"
+                                        ValueChanged="VolumeSlider_ValueChanged"/>
+                            </Border>
+
+                            <!-- 放到滑块下面 -->
+                            <controls:WindowControlButton Click="SoundButtonClick"
                               PathData="{StaticResource Speaker}" />
-                <controls:WindowControlButton Click="ServiceWindowButtonClick"
+                            <controls:WindowControlButton Click="ServiceWindowButtonClick"
                               PathData="{StaticResource SettingsIcon}"/>
-
-
-                    <Slider x:Name="VolumeSlider" Visibility="Hidden"
-                            Style="{StaticResource Slider}" 
-                            Orientation="Vertical"
-                            Value="0" Maximum="100" TickFrequency="1"
-                            Width="20"
-                            Height="96"
-                            Margin="-6,5,0,0"
-                            MouseWheel="Slider_MouseWheel"
-                            ValueChanged="VolumeSlider_ValueChanged"/>
                 </StackPanel>
             </Border>
         </StackPanel>
