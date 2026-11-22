@@ -57,21 +57,21 @@
                     </StackPanel.Resources>
 
                     <controls:WindowControlButton Click="ExitButtonClick" 
-                                                  PathData="{StaticResource CloseIcon}" GlowColor="#d93732"/>
+                              PathData="{StaticResource CloseIcon}" GlowColor="#d93732"/>
                     <controls:WindowControlButton Click="TrayButtonClick" 
-                                                  PathData="{StaticResource HideIcon}"/>
-                    <controls:WindowControlButton x:Name="Pin" Click="PinClick"
-                                                  PathData="{StaticResource Pin}"/>
-                    <controls:WindowControlButton x:Name="Overlay" Click="OverlayClick"
-                                                  PathData="{StaticResource Overlay}"/>
-                    <controls:WindowControlButton x:Name="OpenLogs" Click="LogButtonClick"
-                                                  PathData="{StaticResource LogIcon}"/>
-                    <controls:WindowControlButton Click="ServiceWindowButtonClick"
-                                                  PathData="{StaticResource SettingsIcon}"/>
-                    <controls:WindowControlButton Click="AhkClick" 
-                                                  PathData="{StaticResource AhkIcon}"/>
-                    <controls:WindowControlButton Click="SoundButtonClick"
-                                                  PathData="{StaticResource Speaker}" />
+                              PathData="{StaticResource HideIcon}"/>
+                <controls:WindowControlButton x:Name="Pin" Click="PinClick"
+                              PathData="{StaticResource Pin}"/>
+                <controls:WindowControlButton x:Name="Overlay" Click="OverlayClick"
+                              PathData="{StaticResource Overlay}"/>
+                <controls:WindowControlButton x:Name="OpenLogs" Click="LogButtonClick"
+                              PathData="{StaticResource LogIcon}"/>
+                <controls:WindowControlButton Click="AhkClick" 
+                              PathData="{StaticResource AhkIcon}"/>
+                <controls:WindowControlButton Click="SoundButtonClick"
+                              PathData="{StaticResource Speaker}" />
+                <controls:WindowControlButton Click="ServiceWindowButtonClick"
+                              PathData="{StaticResource SettingsIcon}"/>
 
 
                     <Slider x:Name="VolumeSlider" Visibility="Hidden"
