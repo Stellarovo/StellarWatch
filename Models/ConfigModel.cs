@@ -58,7 +58,7 @@ namespace StellarWatch.Models
             {
                 Settings[name] = default(T);
                 if (name == "Inbound" || name == "SelfDisable" || name == "Buffer" || name == "AutoResync")
-                    Settings[name] = true;
+                    Settings[name] = false;
                 else if (name.Contains("Keybind"))
                     Settings[name] = new List<Keycode>();
                 else if (name == "TimeLimit")
