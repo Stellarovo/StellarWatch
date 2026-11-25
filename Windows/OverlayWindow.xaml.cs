@@ -33,6 +33,8 @@ namespace StellarWatch.Windows
     public partial class OverlayWindow : Window
     {
         [DllImport("user32.dll")]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+        [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
@@ -72,6 +74,7 @@ namespace StellarWatch.Windows
         public OverlayWindow()
         {
             InitializeComponent();
+            Opacity = 0;
             Visibility = Visibility.Collapsed;
             provider = InterceptionManager.GetProvider("Xbox") as XboxProvider;
             Topmost = true;
@@ -88,14 +91,16 @@ namespace StellarWatch.Windows
         {
             if (!CheckGameFocus())
             {
+                this.Opacity = 0;
                 Visibility = Visibility.Collapsed;
-                timer.Interval = TimeSpan.FromSeconds(1);
+                timer.Interval = TimeSpan.FromSeconds(0.3);
                 return;
             }
             if (!TryFollowWindow())
             {
+                this.Opacity = 0;
                 Visibility = Visibility.Collapsed;
-                timer.Interval = TimeSpan.FromSeconds(1);
+                timer.Interval = TimeSpan.FromSeconds(0.3);
                 return;
             }
 
@@ -105,7 +110,8 @@ namespace StellarWatch.Windows
             if (Visibility == Visibility.Collapsed)
             {
                 D2CharacterTracker.Update();
-                this.ElementFadeIn();
+                this.Opacity = 1;
+                this.Visibility = Visibility.Visible;   // 直接显示，不走动画
                 timer.Interval = delta;
             }
         }
@@ -118,25 +124,32 @@ namespace StellarWatch.Windows
         static DateTime lastCheckTime = DateTime.MinValue;
         public static bool CheckGameFocus(bool skipCheck = false)
         {
-            if (!skipCheck && DateTime.Now - lastCheckTime < TimeSpan.FromSeconds(1))
+            if (!skipCheck && DateTime.Now - lastCheckTime < TimeSpan.FromSeconds(0.2))
                 return LastGameFocusResult;
 
             lastCheckTime = DateTime.Now;
 
-            if (cachedProcess == null)
+            // 刷新/获取 Destiny 2 进程
+            if (cachedProcess == null || cachedProcess.HasExited)
             {
-                var process = Process.GetProcessesByName(targetProcessName);
-                if (!process.Any()) return LastGameFocusResult = false;
-                cachedProcess = process.First();
+                var processes = Process.GetProcessesByName(targetProcessName);
+                if (!processes.Any())
+                {
+                    cachedProcess = null;
+                    return LastGameFocusResult = false;
+                }
+                cachedProcess = processes.First();
             }
 
-            if (cachedProcess.HasExited)
-            {
-                cachedProcess = null;
-                return CheckGameFocus(skipCheck);
-            }
+            // 关键：检查当前前台窗口是否属于 Destiny 2
+            IntPtr foregroundWindow = GetForegroundWindow();
+            if (foregroundWindow == IntPtr.Zero)
+                return LastGameFocusResult = false;
 
-            lastCheckTime += TimeSpan.FromSeconds(1.5);
+            GetWindowThreadProcessId(foregroundWindow, out uint foregroundPid);
+            if (foregroundPid != (uint)cachedProcess.Id)
+                return LastGameFocusResult = false;
+
             return LastGameFocusResult = true;
         }
 
@@ -215,7 +228,7 @@ namespace StellarWatch.Windows
                         ui.ElementFadeOut();
                         Task.Run(async () =>
                         {
-                            await Task.Delay(TimeSpan.FromSeconds(0.5));
+                            await Task.Delay(TimeSpan.FromSeconds(0.2));
                             Dispatcher.Invoke(() => Modules.Children.Remove(ui));
                         });
                         continue;
@@ -228,7 +241,7 @@ namespace StellarWatch.Windows
                         ui.ElementFadeOut();
                         Task.Run(async () =>
                         {
-                            await Task.Delay(TimeSpan.FromSeconds(0.5));
+                            await Task.Delay(TimeSpan.FromSeconds(0.2));
                             Dispatcher.Invoke(() => Modules.Children.Remove(ui));
                         });
                         continue;

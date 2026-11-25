@@ -278,14 +278,11 @@ namespace StellarWatch
         {
             if (overlay == null)
             {
-                if (!OverlayWindow.CheckGameFocus(true))
-                {
-                    return;
-                }
+                // 删除原来的 if (!CheckGameFocus) return;
                 overlay = new OverlayWindow();
-                OverlayWindow.CheckGameFocus(true);
-                overlay.TryFollowWindow();
-                overlay.Show();
+                overlay.Opacity = 0;
+                overlay.Visibility = Visibility.Collapsed;
+                overlay.Show();   // 先创建并显示窗口（内部会自动 Collapsed）
             }
             else
             {
