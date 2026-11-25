@@ -1,4 +1,4 @@
-﻿ using StellarWatch.Controls;
+﻿using StellarWatch.Controls;
 using StellarWatch.Utility;
 
 using System;
@@ -17,14 +17,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
-
+using System.Windows.Threading;
 using Application = System.Windows.Application;
 
 namespace StellarWatch
 {
     public partial class ServiceWindow : Window
     {
+        private DispatcherTimer _forceShowTimer;
         bool loaded = false;
         public ServiceWindow()
         {
@@ -32,6 +32,15 @@ namespace StellarWatch
             InitializeComponent();
             MouseDown += ServiceWindow_MouseDown;
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, () => SetupValues());
+            _forceShowTimer = new DispatcherTimer
+            {
+            Interval = TimeSpan.FromSeconds(3)
+            };
+            _forceShowTimer.Tick += (s, e) =>
+            {
+            _forceShowTimer.Stop();
+            StellarWatch.Windows.OverlayWindow.ForceShowForSettings = false;
+            };
         }
 
         private void SetupValues()
@@ -179,6 +188,9 @@ namespace StellarWatch
                 Config.Instance.Settings.Overlay_LeftOffset = px;
                 OverlayX.Text = Config.Instance.Settings.Overlay_LeftOffset.ToString();
                 Config.Save();
+                StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+                _forceShowTimer.Stop();
+                _forceShowTimer.Start();
                 MainWindow.Instance.overlay?.TryFollowWindow();
             }
         }
@@ -191,6 +203,9 @@ namespace StellarWatch
                 Config.Instance.Settings.Overlay_BottomOffset = px;
                 OverlayY.Text = Config.Instance.Settings.Overlay_BottomOffset.ToString();
                 Config.Save();
+                StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+                _forceShowTimer.Stop();
+                _forceShowTimer.Start();
                 MainWindow.Instance.overlay?.TryFollowWindow();
             }
         }
@@ -204,6 +219,9 @@ namespace StellarWatch
                 Config.Instance.Settings.Overlay_ScalePercent = percent;
                 OverlayScale.Text = Config.Instance.Settings.Overlay_ScalePercent.ToString();
                 Config.Save();
+                StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+                _forceShowTimer.Stop();
+                _forceShowTimer.Start();
                 MainWindow.Instance.overlay?.TryFollowWindow();
             }
         }

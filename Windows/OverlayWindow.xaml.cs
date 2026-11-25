@@ -3,7 +3,7 @@ using StellarWatch.Interception;
 using StellarWatch.Interception.Modules;
 using StellarWatch.Interception.PacketProviders;
 using StellarWatch.Utility;
-
+using StellarWatch.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,6 +32,7 @@ namespace StellarWatch.Windows
 {
     public partial class OverlayWindow : Window
     {
+        public static bool ForceShowForSettings = false;
         [DllImport("user32.dll")]
         static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
         [DllImport("user32.dll")]
@@ -124,31 +125,35 @@ namespace StellarWatch.Windows
         static DateTime lastCheckTime = DateTime.MinValue;
         public static bool CheckGameFocus(bool skipCheck = false)
         {
-            if (!skipCheck && DateTime.Now - lastCheckTime < TimeSpan.FromSeconds(0.2))
-                return LastGameFocusResult;
+            
+        // 设置时强制显示
+        if (ForceShowForSettings)
+            return true;
+        if (!skipCheck && DateTime.Now - lastCheckTime < TimeSpan.FromSeconds(0.2))
+            return LastGameFocusResult;
 
-            lastCheckTime = DateTime.Now;
+        lastCheckTime = DateTime.Now;
 
-            // 刷新/获取 Destiny 2 进程
-            if (cachedProcess == null || cachedProcess.HasExited)
+        // 刷新/获取 Destiny 2 进程
+        if (cachedProcess == null || cachedProcess.HasExited)
+        {
+            var processes = Process.GetProcessesByName(targetProcessName);
+            if (!processes.Any())
             {
-                var processes = Process.GetProcessesByName(targetProcessName);
-                if (!processes.Any())
-                {
-                    cachedProcess = null;
-                    return LastGameFocusResult = false;
-                }
-                cachedProcess = processes.First();
+                cachedProcess = null;
+                return LastGameFocusResult = false;
             }
+            cachedProcess = processes.First();
+        }
 
-            // 关键：检查当前前台窗口是否属于 Destiny 2
-            IntPtr foregroundWindow = GetForegroundWindow();
-            if (foregroundWindow == IntPtr.Zero)
-                return LastGameFocusResult = false;
+        // 关键：检查当前前台窗口是否属于 Destiny 2
+        IntPtr foregroundWindow = GetForegroundWindow();
+        if (foregroundWindow == IntPtr.Zero)
+            return LastGameFocusResult = false;
 
-            GetWindowThreadProcessId(foregroundWindow, out uint foregroundPid);
-            if (foregroundPid != (uint)cachedProcess.Id)
-                return LastGameFocusResult = false;
+        GetWindowThreadProcessId(foregroundWindow, out uint foregroundPid);
+        if (foregroundPid != (uint)cachedProcess.Id)
+            return LastGameFocusResult = false;
 
             return LastGameFocusResult = true;
         }
@@ -183,24 +188,12 @@ namespace StellarWatch.Windows
                 // 345 200
                 Width = ((win_w - xoffset * 2) / 4) * scalePercent;
                 Height = ((win_h - yoffset * 2) / 4) * scalePercent;
-                //Logger.Debug($"{win_w}/{win_h} -> {Width}:{Height}, xoff-{xoffset}, yoff-{yoffset}");
 
                 Left = rect.Left / dpi.DpiScaleX + xoffset + 118 * (win_w - xoffset * 2) / w_base * scalePercent + Config.Instance.Settings.Overlay_LeftOffset;
                 Top = rect.Top / dpi.DpiScaleY + yoffset + ((win_h - yoffset * 2) * 3 / 4) - Config.Instance.Settings.Overlay_BottomOffset;
 
                 Scale.ScaleX = ((win_w - xoffset * 2) / w_base) * scalePercent;
                 Scale.ScaleY = ((win_h - yoffset * 2) / h_base) * scalePercent;
-
-                //Left = 0;
-                //Top = 0;
-                //Width = 2560 / 2;
-                //Height = 1440;
-                //Left = rect.Left + xoffset + 123d * x_multiplier;
-                //Top = rect.Bottom - yoffset - 318d * y_multiplier;
-                //Height = rect.Bottom - rect.Top - yoffset * 2;
-                //Width = Height * target;
-                //Width = 345d * x_multiplier * 2;
-                //Height = 200d * y_multiplier * 2;
                 return true;
             }
             return false;
