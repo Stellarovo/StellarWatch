@@ -34,11 +34,12 @@ namespace StellarWatch
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, () => SetupValues());
             _forceShowTimer = new DispatcherTimer
             {
-            Interval = TimeSpan.FromSeconds(3)
+            Interval = TimeSpan.FromSeconds(0.5)
             };
             _forceShowTimer.Tick += (s, e) =>
             {
             _forceShowTimer.Stop();
+            MainWindow.Instance.overlay?.TryFollowWindow();
             StellarWatch.Windows.OverlayWindow.ForceShowForSettings = false;
             };
         }
@@ -186,9 +187,13 @@ namespace StellarWatch
             if (int.TryParse(OverlayX.Text.Trim(), out var px))
             { 
                 Config.Instance.Settings.Overlay_LeftOffset = px;
-                OverlayX.Text = Config.Instance.Settings.Overlay_LeftOffset.ToString();
                 Config.Save();
                 StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+                if (MainWindow.Instance.overlay != null)
+                {
+                MainWindow.Instance.overlay.Opacity = 1;
+                MainWindow.Instance.overlay.Visibility = Visibility.Visible;
+                }
                 _forceShowTimer.Stop();
                 _forceShowTimer.Start();
                 MainWindow.Instance.overlay?.TryFollowWindow();
@@ -201,9 +206,13 @@ namespace StellarWatch
             if (int.TryParse(OverlayY.Text.Trim(), out var px))
             {
                 Config.Instance.Settings.Overlay_BottomOffset = px;
-                OverlayY.Text = Config.Instance.Settings.Overlay_BottomOffset.ToString();
                 Config.Save();
                 StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+                if (MainWindow.Instance.overlay != null)
+                {
+                MainWindow.Instance.overlay.Opacity = 1;
+                MainWindow.Instance.overlay.Visibility = Visibility.Visible;
+                }
                 _forceShowTimer.Stop();
                 _forceShowTimer.Start();
                 MainWindow.Instance.overlay?.TryFollowWindow();
@@ -217,9 +226,13 @@ namespace StellarWatch
             {
                 percent = Math.Clamp(percent, 0, 100);
                 Config.Instance.Settings.Overlay_ScalePercent = percent;
-                OverlayScale.Text = Config.Instance.Settings.Overlay_ScalePercent.ToString();
                 Config.Save();
                 StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+                if (MainWindow.Instance.overlay != null)
+                {
+                MainWindow.Instance.overlay.Opacity = 1;
+                MainWindow.Instance.overlay.Visibility = Visibility.Visible;
+                }
                 _forceShowTimer.Stop();
                 _forceShowTimer.Start();
                 MainWindow.Instance.overlay?.TryFollowWindow();
