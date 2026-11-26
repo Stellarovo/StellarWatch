@@ -184,14 +184,6 @@ namespace StellarWatch.Windows
                                 }
 
                                 string info = $"In:{download.Sum().BytesLenghtToString()} Out:{upload.Sum().BytesLenghtToString()}";
-                                // TODO: add player tags (not sure tho)
-
-                                //var plot = new PlotModel();
-                                //var series = new LineSeries();
-                                //for (int i = 0; i < data.Count; i++)
-                                //    series.Points.Add(new DataPoint(i, data[i]));
-                                //plot.Series.Add(series);
-
                                 ConnectionsContainer.Add(new ConnectionModel()
                                 {
                                     Address = target,
