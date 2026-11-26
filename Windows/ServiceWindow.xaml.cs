@@ -24,7 +24,6 @@ namespace StellarWatch
 {
     public partial class ServiceWindow : Window
     {
-        private DispatcherTimer _forceShowTimer;
         bool loaded = false;
         public ServiceWindow()
         {
@@ -32,16 +31,12 @@ namespace StellarWatch
             InitializeComponent();
             MouseDown += ServiceWindow_MouseDown;
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, () => SetupValues());
-            _forceShowTimer = new DispatcherTimer
-            {
-            Interval = TimeSpan.FromSeconds(0.5)
-            };
-            _forceShowTimer.Tick += (s, e) =>
-            {
-            _forceShowTimer.Stop();
-            MainWindow.Instance.overlay?.TryFollowWindow();
+
+        }
+        protected override void OnClosed(EventArgs e)
+        {
             StellarWatch.Windows.OverlayWindow.ForceShowForSettings = false;
-            };
+            base.OnClosed(e);
         }
 
         private void SetupValues()
@@ -185,18 +180,16 @@ namespace StellarWatch
         {
             if (!loaded) return;
             if (int.TryParse(OverlayX.Text.Trim(), out var px))
-            { 
+            {
                 Config.Instance.Settings.Overlay_LeftOffset = px;
                 Config.Save();
+
                 StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
                 if (MainWindow.Instance.overlay != null)
                 {
                 MainWindow.Instance.overlay.Opacity = 1;
-                MainWindow.Instance.overlay.Visibility = Visibility.Visible;
+                MainWindow.Instance.overlay.TryFollowWindow();
                 }
-                _forceShowTimer.Stop();
-                _forceShowTimer.Start();
-                MainWindow.Instance.overlay?.TryFollowWindow();
             }
         }
 
@@ -205,17 +198,16 @@ namespace StellarWatch
             if (!loaded) return;
             if (int.TryParse(OverlayY.Text.Trim(), out var px))
             {
-                Config.Instance.Settings.Overlay_BottomOffset = px;
-                Config.Save();
-                StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
-                if (MainWindow.Instance.overlay != null)
-                {
-                MainWindow.Instance.overlay.Opacity = 1;
-                MainWindow.Instance.overlay.Visibility = Visibility.Visible;
-                }
-                _forceShowTimer.Stop();
-                _forceShowTimer.Start();
-                MainWindow.Instance.overlay?.TryFollowWindow();
+              Config.Instance.Settings.Overlay_BottomOffset = px;
+              Config.Save();
+
+              StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+              if (MainWindow.Instance.overlay != null)
+              {
+              MainWindow.Instance.overlay.Opacity = 1;
+              MainWindow.Instance.overlay.Visibility = Visibility.Visible;
+              MainWindow.Instance.overlay.TryFollowWindow();
+              }
             }
         }
 
@@ -224,18 +216,17 @@ namespace StellarWatch
             if (!loaded) return;
             if (int.TryParse(OverlayScale.Text.Trim(), out var percent))
             {
-                percent = Math.Clamp(percent, 0, 100);
-                Config.Instance.Settings.Overlay_ScalePercent = percent;
-                Config.Save();
-                StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
-                if (MainWindow.Instance.overlay != null)
-                {
-                MainWindow.Instance.overlay.Opacity = 1;
-                MainWindow.Instance.overlay.Visibility = Visibility.Visible;
-                }
-                _forceShowTimer.Stop();
-                _forceShowTimer.Start();
-                MainWindow.Instance.overlay?.TryFollowWindow();
+              percent = Math.Clamp(percent, 0, 100);
+              Config.Instance.Settings.Overlay_ScalePercent = percent;
+              Config.Save();
+
+              StellarWatch.Windows.OverlayWindow.ForceShowForSettings = true;
+              if (MainWindow.Instance.overlay != null)
+              {
+              MainWindow.Instance.overlay.Opacity = 1;
+              MainWindow.Instance.overlay.Visibility = Visibility.Visible;
+              MainWindow.Instance.overlay.TryFollowWindow();
+              }
             }
         }
 

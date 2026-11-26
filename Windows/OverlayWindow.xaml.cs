@@ -77,6 +77,7 @@ namespace StellarWatch.Windows
             InitializeComponent();
             Opacity = 0;
             Visibility = Visibility.Collapsed;
+            ShowActivated = false;          // 关键：禁止覆盖层抢焦点
             provider = InterceptionManager.GetProvider("Xbox") as XboxProvider;
             Topmost = true;
             timer = new DispatcherTimer();
