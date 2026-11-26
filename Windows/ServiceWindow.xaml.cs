@@ -160,22 +160,6 @@ namespace StellarWatch
             Config.Save();
         }
 
-        //private void DB_MaxAge_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    if (!loaded) return;
-        //    if (int.TryParse(DB_MaxAge.Text, out int hours))
-        //    {
-        //        if (hours > 48 || hours < 1)
-        //        {
-        //            DB_MaxAge.Text = Config.Instance.Settings.DB_HoursMaxAge.ToString();
-        //            return;
-        //        }
-
-        //        Config.Instance.Settings.DB_HoursMaxAge = hours;
-        //        Config.Save();
-        //    } 
-        //}
-
         private void OverlayX_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!loaded) return;
